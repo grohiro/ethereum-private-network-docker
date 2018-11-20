@@ -1,0 +1,26 @@
+version: '3'
+services:
+  bootnode:
+    image: ethereum/client-go-alltools
+    command: bootnode -nodekey=/var/ethereum/boot.key -addr ":30301"
+    ports:
+      - 30301:30301
+    volumes:
+      - ./storage/bootnode:/var/ethereum
+  geth-private:
+    build: ./geth
+    command: --networkid 547 --mine --minerthreads 1 --rpc --rpcaddr "0.0.0.0" --rpcport 8545 --rpccorsdomain "*" --rpcapi "eth,net,web3" --unlock 0 --gasprice 0 --bootnodes "enode://bd0a688a5ec7d4f0989b829fc331b167c01630400cb84c8d2b9ff9b3422a68562ee16c610c4ca36794a50638c063c5a36a4c1353143301d459efa5bd433956e3@172.22.0.2:30301"
+    volumes:
+      - ./storage/geth-private:/var/ethereum
+      - ./storage/geth-private/.ethash:/root/.ethash
+    depends_on:
+      - bootnode
+  geth-public:
+    build: ./geth
+    command: --networkid 547 --mine --minerthreads 1 --rpc --rpcaddr "0.0.0.0" --rpcport 8545 --rpccorsdomain "*" --rpcapi "eth,net,web3" --unlock 0 --gasprice 0 --bootnodes "enode://bd0a688a5ec7d4f0989b829fc331b167c01630400cb84c8d2b9ff9b3422a68562ee16c610c4ca36794a50638c063c5a36a4c1353143301d459efa5bd433956e3@172.22.0.2:30301"
+    volumes:
+      - ./storage/geth-public:/var/ethereum
+      - ./storage/geth-public/.ethash:/root/.ethash
+    depends_on:
+      - bootnode
+
